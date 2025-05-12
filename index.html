@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Posts</title>
+</head>
+<body>
+    <div id="form_app" class="container">
+        
+        <form class="row g-8 my-2 p-2" v-if="!showdata">
+            <div class="form-group mt-2">
+                <label for="title">Title:</label>
+                <input type="text" id="title" class="form-control" v-model="post.title" required>
+            </div>
+            <div class="form-group mt-2">
+                <label for="content">Content:</label>
+                <input type="text" id="content" class="form-control" v-model="post.content" required>
+            </div>
+            <div class="form-group mt-2">
+                <label for="category">Category:</label>
+                <div v-for="category in postdata.categories" :key="category">
+                    <input type="radio" name="categoryGroup" :value="category" v-model="post.category" required>
+                    <label>{{ category }}</label>
+                </div>
+            </div>
+            <div class="form-group mt-2">
+                <label for="series">Series:</label>
+                <select v-model="post.series" id="series" class="form-control" required>
+                    <option value="" disabled>Select Series</option>
+                    <option v-for="series in postdata.series" :key="series" :value="series">{{ series }}</option>
+                </select>
+            </div>
+            <div class="form-group mt-2">
+                <label for="shareon">Share on:</label>
+                <div v-for="media in postdata.shareon" :key="media">
+                    <input type="checkbox" :name="media" :value="media" v-model="post.shareon" :id="media">
+                    <label :for="media">{{ media }}</label><br>
+                </div>
+                <input type="checkbox" name="media" v-model="post.sendimmediately" true-value="Immediately" false-value="Later">
+                <span class="fs-5">ShareImmediately</span>
+            </div>
+            <button class="btn btn-primary w-180 my-2" @click="goToDataView">Next</button>
+        </form>
+        <form class="row g-8 my-2 border border-primary p-2" v-if="showdata">
+            <h4 class="w-100 text-primary text-center">User Data</h4>
+            <label class="text-primary lead">Title :</label> {{ post.title }}<br>
+            <label class="text-primary lead">Content :</label> {{ post.content }}<br>
+            <label class="text-primary lead">Category :</label> {{ post.category }}<br>
+            <label class="text-primary lead">Series :</label> {{ post.series }}<br>
+            <label class="text-primary lead">Share immediately :</label> {{ post.sendimmediately }}<br>
+            <label class="text-primary lead">Share on :</label> {{ (post.shareon && post.shareon.length > 0) ? post.shareon.join(', ') : 'None' }}<br>
+            <button class="btn btn-primary w-180 my-2" @click="showdata = false">Prev</button>
+            <button class="btn btn-warning w-180 my-2" @click="Submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        const app = Vue.createApp({
+            data: () => ({
+                showdata: false,
+                post: {
+                    title: '',
+                    content: '',
+                    category: '',
+                    series: '',
+                    shareon: [],
+                    sendimmediately: 'Later'
+                },
+                postdata: {
+                    categories: ['Testing', 'Developing', 'Networking', 'Designing'],
+                    shareon: ['Facebook', 'Twitter', 'LinkedIn', 'Instagram'],
+                    series: ['First Edition', 'Second Edition', 'Third Edition']
+                }
+            }),
+            methods: {
+                goToDataView() {
+                    const invalidFields = document.querySelectorAll('#form_app input[required]:invalid').length;
+                    if (invalidFields === 0 && this.post.category && this.post.series) {
+                        this.showdata = true;
+                    }
+                },
+                Submit() {
+                    alert('Form submitted successfully!');
+                    console.log(this.post);
+                    this.showdata = false;
+                    this.post = {
+                        title: '',
+                        content: '',
+                        category: '',
+                        series: '',
+                        shareon: [],
+                        sendimmediately: 'Later'
+                    };
+                }
+            }
+        });
+
+        app.mount('#form_app');
+    </script>
+</body>
+</html>
